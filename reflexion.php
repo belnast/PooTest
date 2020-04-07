@@ -168,6 +168,7 @@
 
     class Magicien extends Personnage
     {
+        protected $magie;
         public function lancerUnSort(Personnage $perso)
         {
             if ($this->degats >= 0 && $this->degats <= 25)
@@ -261,3 +262,62 @@
     {
         echo 'La classe iMagicien n\'est pas une interface';
     }
+
+    //$attributMagie = new ReflectionProperty('Magicien', 'magie');
+
+    $classeMagicien = new ReflectionClass('Magicien');
+    $attributMagie = $classeMagicien->getProperty('magie');
+    var_dump($attributMagie);
+
+    $classePersonnage = new ReflectionClass('Personnage');
+    $attributsPersonnage = $classePersonnage->getProperties();
+    var_dump($attributsPersonnage);
+
+    $classeMagicien = new ReflectionClass('Magicien');
+    $magicien = new Magicien(['nom' => 'vyk12', 'type' => 'magicien']);
+
+    foreach ($classeMagicien->getProperties() as $attribut)
+    {
+        $attribut->setAccessible(true);
+        echo $attribut->getName(), ' => ', $attribut->getValue($magicien);
+    }
+
+    $uneClasse = new ReflectionClass('Magicien');
+echo '<br>';
+    foreach ($uneClasse->getProperties() as $attribut)
+    {
+        echo $attribut->getName(), ' => attribut ';
+
+        if ($attribut->isPublic())
+        {
+            echo 'public';
+        }
+        elseif ($attribut->isProtected())
+        {
+            echo 'protégé';
+        }
+        else
+        {
+            echo 'privé';
+        }
+
+        if ($attribut->isStatic())
+        {
+            echo ' (attribut statique)';
+        }
+    }
+    class A
+    {
+        public function hello($arg1, $arg2, $arg3 = 1, $arg4 = 'Hello world !')
+        {
+            var_dump($arg1, $arg2, $arg3, $arg4);
+        }
+    }
+
+    $a = new A;
+    $hello = new ReflectionMethod('A', 'hello');
+
+    $hello->invoke($a, 'test', 'autre test'); // On ne va passer que deux arguments à notre méthode.
+
+    // A l'écran s'affichera donc :
+    // string(4) "test" string(10) "autre test" int(1) string(13) "Hello world !"
